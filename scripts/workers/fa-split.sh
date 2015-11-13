@@ -11,6 +11,11 @@ if [[ -z $SPLIT_DIR ]]; then
   exit
 fi
 
+if [[ -z $WORKER_DIR ]]; then
+  echo WORKER_DIR not defined.
+  exit
+fi
+
 if [[ ! -d $SPLIT_DIR ]]; then
   mkdir -p $SPLIT_DIR
 fi
@@ -19,7 +24,7 @@ if [[ -n $BIN_DIR ]]; then
   PATH=$BIN_DIR:$PATH
 fi
 
-SPLITTER=$SCRIPT_DIR/fasta-splitter.pl
+SPLITTER=$WORKER_DIR/fasta-splitter.pl
 if [[ ! -e $SPLITTER ]]; then
   echo Cannot find SPLITTER \"$SPLITTER\"
   exit

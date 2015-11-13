@@ -51,7 +51,10 @@ sub main {
             if ($seq_num >= $max || !$writer) {
                 $split_num++;
                 $seq_num = 0;
-                my $f = catfile($out_dir, "$basename.$split_num");
+                my $f = catfile(
+                    $out_dir, 
+                    join('.', $basename, sprintf('%03d', $split_num))
+                );
                 $writer = Bio::SeqIO->new(
                     -format => 'Fasta', 
                     -file   => ">$f"
