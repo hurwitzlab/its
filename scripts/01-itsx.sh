@@ -23,7 +23,25 @@ if [[ ! -d $SPLIT_DIR ]]; then
 fi
 
 export FILES_LIST="$HOME/$$.in"
-find $SPLIT_DIR -type f > $FILES_LIST
+if [[ -e $FILES_LIST ]]; then
+  rm -f $FILES_LIST
+fi
+
+INPUT_FILES_LIST=${1:-""}
+if [[ -n $INPUT_FILES_LIST ]] && [[ -s $INPUT_FILES_LIST ]]; then
+  echo Reading INPUT_FILES_LIST \"$INPUT_FILES_LIST\"
+
+  while read FILE; do
+    if [[ -s $FILE ]]; then
+      echo $FILE >> $FILES_LIST
+    else 
+      echo Bad input file \"$FILE\"
+    fi
+  done < $INPUT_FILES_LIST
+else
+  echo Searching for files in SPLIT_DIR \"$SPLIT_DIR\"
+  find $SPLIT_DIR -type f > $FILES_LIST
+fi
 
 NUM_FILES=$(lc $FILES_LIST)
 
@@ -32,11 +50,11 @@ if [[ $NUM_FILES -lt 1 ]]; then
   exit
 fi
 
-echo Found NUM_FILES \"$NUM_FILES\" in \"$SPLIT_DIR\"
+echo Will process NUM_FILES \"$NUM_FILES\"
 
 EMAIL_ARG=''
 if [[ -n $PBS_EMAIL ]]; then
-  EMAIL_ARG="-M $PBS_EMAIL -m ea"
+  EMAIL_ARG="-M '$PBS_EMAIL' -m ea"
 fi
 
 GROUP_ARG="-W group_list=${PBS_GROUP:-bhurwitz}"
